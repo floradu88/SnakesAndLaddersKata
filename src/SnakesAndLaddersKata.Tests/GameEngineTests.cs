@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using SnakesAndLaddersKata.Engine;
 using SnakesAndLaddersKata.Interfaces;
 
@@ -32,6 +33,24 @@ namespace SnakesAndLaddersKata.Tests
             IGameEngine gameEngine = new GameEngine();
 
             Assert.False(gameEngine.Started);
+        }
+
+        [Test]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void Should_be_able_to_add_players_to_the_game(int noPlayers)
+        {
+            IGameEngine gameEngine = new GameEngine(noPlayers);
+
+            Assert.AreEqual(noPlayers, gameEngine.PlayerNumber);
+        }
+
+        [Test]
+        [TestCase(-1)]
+        [TestCase(0)]
+        public void Should_not_be_able_to_add_invalid_players_to_the_game(int noPlayers)
+        {
+            Assert.Throws<InvalidOperationException>(() => new GameEngine(noPlayers));
         }
     }
 }

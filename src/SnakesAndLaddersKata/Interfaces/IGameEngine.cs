@@ -4,5 +4,6 @@
     {
         bool Start();
         bool Started { get; }
+        int PlayerNumber { get; }
     }
 }
