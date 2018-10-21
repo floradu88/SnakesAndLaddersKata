@@ -12,6 +12,8 @@ namespace SnakesAndLaddersKata.Engine
 
         public bool Started { get; private set; }
         public int PlayerNumber { get; }
+        public bool Finished { get; private set; }
+        public int Winner { get; private set; }
 
         public GameEngine(IRandomGenerator randomGenerator, int playerNumber = 2)
         {
@@ -19,6 +21,7 @@ namespace SnakesAndLaddersKata.Engine
                 throw new InvalidOperationException("Invalid Number of players");
             _randomGenerator = randomGenerator;
             PlayerNumber = playerNumber;
+            Finished = false;
             _currentProgress = new Dictionary<int, int>();
 
             for (int i = 1; i <= playerNumber; i++)
@@ -42,8 +45,20 @@ namespace SnakesAndLaddersKata.Engine
 
         public int RollDice()
         {
-            _currentProgress[_currentPlayer] += _randomGenerator.Generate();
-            return _currentProgress[_currentPlayer];
+            var progress = _randomGenerator.Generate();
+            
+            if (_currentProgress[_currentPlayer] + progress == 100)
+            {
+                _currentProgress[_currentPlayer] += progress;
+                Finished = true;
+                Winner = _currentPlayer;
+            }
+            else if (_currentProgress[_currentPlayer] + progress < 100)
+            {
+                _currentProgress[_currentPlayer] += progress;
+            }
+
+            return progress;
         }
 
         public double GetPlayerProgress(int playerNumber)

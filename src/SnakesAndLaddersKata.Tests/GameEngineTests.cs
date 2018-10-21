@@ -132,7 +132,8 @@ namespace SnakesAndLaddersKata.Tests
         {
             // Given the token is on square 1
             // When the token is moved 3 spaces
-            // Then the token is on square 4
+            // And then it is moved 4 spaces
+            // Then the token is on square 8
             var randomGenerator = new Mock<IRandomGenerator>();
 
             IGameEngine gameEngine = new GameEngine(randomGenerator.Object);
@@ -152,5 +153,50 @@ namespace SnakesAndLaddersKata.Tests
             Assert.AreEqual(gameEngine.GetPlayerProgress(1), expectedSecondRollDice + expectedFirstRollDice + 1);
             Assert.AreEqual((gameEngine.GetPlayerProgress(1) - playerProgress), expectedSecondRollDice);
         }
+
+        [Test]
+        [TestCase(96, 3)]
+        public void Should_be_able_to_win_game_if_player_reaches_100(int startingPosition, int rollDice)
+        {
+            // Given the token is on square 1
+            // When the token is moved 3 spaces
+            // And then it is moved 4 spaces
+            // Then the token is on square 8
+            var randomGenerator = new Mock<IRandomGenerator>();
+
+            IGameEngine gameEngine = new GameEngine(randomGenerator.Object);
+
+            randomGenerator.Setup(x => x.Generate()).Returns(startingPosition);
+            gameEngine.RollDice();
+
+            randomGenerator.Setup(x => x.Generate()).Returns(rollDice);
+            gameEngine.RollDice();
+            Assert.True(gameEngine.Finished);
+            Assert.AreEqual(gameEngine.Winner, 1);
+        }
+
+        [Test]
+        [TestCase(96, 4)]
+        public void Should_be_able_to_win_game_if_player_reaches_above_100(int startingPosition, int rollDice)
+        {
+            // Given the token is on square 97
+            // When the token is moved 4 spaces
+            // Then the token is on square 97
+            // And the player has not won the game
+            var randomGenerator = new Mock<IRandomGenerator>();
+
+            IGameEngine gameEngine = new GameEngine(randomGenerator.Object);
+
+            randomGenerator.Setup(x => x.Generate()).Returns(startingPosition);
+            gameEngine.RollDice();
+
+            randomGenerator.Setup(x => x.Generate()).Returns(rollDice);
+            gameEngine.RollDice();
+
+            Assert.False(gameEngine.Finished);
+            Assert.AreEqual(gameEngine.Winner, 0);
+        }
+
+        
     }
 }
